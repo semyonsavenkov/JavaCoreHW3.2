@@ -1,4 +1,6 @@
-public class GameProgress {
+import java.io.Serializable;
+
+public class GameProgress implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

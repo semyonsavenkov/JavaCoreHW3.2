@@ -8,23 +8,26 @@ import java.util.zip.ZipOutputStream;
 public class Main {
 
     public static void main(String[] args) {
+
+        String directoryPath = "/Users/semyonsavenkov/IdeaProjects/JavaCoreHW3_Files/Games/savegames/";
+
         //creating gameProgress and saving it to a file
         GameProgress gameProgress =
                 new GameProgress(94, 10, 2, 254.32);
-        saveGame(gameProgress);
+        saveGame(directoryPath,gameProgress);
 
         GameProgress gameProgress2 =
                 new GameProgress(85, 12, 3, 300.50);
-        saveGame(gameProgress2);
+        saveGame(directoryPath,gameProgress2);
 
         GameProgress gameProgress3 =
                 new GameProgress(70, 15, 5, 500.50);
-        saveGame(gameProgress3);
+        saveGame(directoryPath,gameProgress3);
 
         //adding saves to a zip archive
         ArrayList listOfFiles = new ArrayList<String>();
 
-        File savesDir = new File("Games/savegames");
+        File savesDir = new File(directoryPath);
         if (savesDir.isDirectory()) {
             for (File item : savesDir.listFiles()) {
                 if (! item.getName().contains(".zip")) {
@@ -32,7 +35,7 @@ public class Main {
 
                 }
             }
-            zipFiles(listOfFiles);
+            zipFiles(directoryPath, listOfFiles);
 
             //deleting non-zip files after archivation
             for (File item : savesDir.listFiles()) {
@@ -43,11 +46,11 @@ public class Main {
         }
     }
 
-    public static void saveGame(GameProgress currentGameProgress) {
+    public static void saveGame(String directoryPath, GameProgress currentGameProgress) {
 
         String formatedDate = getStringDate();
 
-        try (FileOutputStream fos = new FileOutputStream("Games/savegames/save" + formatedDate +
+        try (FileOutputStream fos = new FileOutputStream(directoryPath + "save" + formatedDate +
                 currentGameProgress.hashCode() +  ".dat");
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
             oos.writeObject(currentGameProgress);
@@ -56,12 +59,12 @@ public class Main {
         }
     }
 
-    public static void zipFiles(ArrayList<String> listOfFiles) {
+    public static void zipFiles(String directoryPath, ArrayList<String> listOfFiles) {
 
         String formatedDate = getStringDate();
 
         try (ZipOutputStream zout = new ZipOutputStream(
-                new FileOutputStream("Games/savegames/save" + formatedDate + "archivedsaves.zip"))
+                new FileOutputStream(directoryPath + formatedDate + "archivedsaves.zip"))
         ) {
             for (String currentFile : listOfFiles) {
 
