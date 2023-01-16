@@ -9,28 +9,28 @@ public class Main {
 
     public static void main(String[] args) {
 
-        String directoryPath = "/Users/semyonsavenkov/IdeaProjects/JavaCoreHW3_Files/Games/savegames/";
+        String directoryPath = "D:\\Games/savegames/";
 
         //creating gameProgress and saving it to a file
         GameProgress gameProgress =
                 new GameProgress(94, 10, 2, 254.32);
-        saveGame(directoryPath,gameProgress);
+        saveGame(directoryPath, gameProgress);
 
         GameProgress gameProgress2 =
                 new GameProgress(85, 12, 3, 300.50);
-        saveGame(directoryPath,gameProgress2);
+        saveGame(directoryPath, gameProgress2);
 
         GameProgress gameProgress3 =
                 new GameProgress(70, 15, 5, 500.50);
-        saveGame(directoryPath,gameProgress3);
+        saveGame(directoryPath, gameProgress3);
 
         //adding saves to a zip archive
-        ArrayList listOfFiles = new ArrayList<String>();
+        ArrayList<String> listOfFiles = new ArrayList<>();
 
         File savesDir = new File(directoryPath);
         if (savesDir.isDirectory()) {
             for (File item : savesDir.listFiles()) {
-                if (! item.getName().contains(".zip")) {
+                if (!item.getName().contains(".zip")) {
                     listOfFiles.add(item.getAbsolutePath());
 
                 }
@@ -39,7 +39,7 @@ public class Main {
 
             //deleting non-zip files after archivation
             for (File item : savesDir.listFiles()) {
-                if (! item.getName().contains(".zip")) {
+                if (!item.getName().contains(".zip")) {
                     item.delete();
                 }
             }
@@ -48,36 +48,29 @@ public class Main {
 
     public static void saveGame(String directoryPath, GameProgress currentGameProgress) {
 
-        String formatedDate = getStringDate();
-
-        try (FileOutputStream fos = new FileOutputStream(directoryPath + "save" + formatedDate +
-                currentGameProgress.hashCode() +  ".dat");
+        try (FileOutputStream fos = new FileOutputStream(directoryPath + "save" +
+                currentGameProgress.hashCode() + ".dat");
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
             oos.writeObject(currentGameProgress);
         } catch (Exception ex) {
-            System.out.println(ex.getMessage());
+            ex.printStackTrace();
         }
     }
 
     public static void zipFiles(String directoryPath, ArrayList<String> listOfFiles) {
-
-        String formatedDate = getStringDate();
-
-        try (ZipOutputStream zout = new ZipOutputStream(
-                new FileOutputStream(directoryPath + formatedDate + "archivedsaves.zip"))
-        ) {
-            for (String currentFile : listOfFiles) {
-
-                try (FileInputStream fis = new FileInputStream(currentFile)) {
-                    ZipEntry entry = new ZipEntry(currentFile);
-                    zout.putNextEntry(entry);
-                    byte[] buffer = new byte[fis.available()];
-                    fis.read(buffer);
-                    zout.write(buffer);
-                    zout.closeEntry();
-                } catch (IOException exception) {
-                    System.out.println(exception.getMessage());
-                }
+        int k = 0;
+        try (ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(directoryPath + "zipOutputGames.zip", true))) {
+            for (String traceToZip :
+                    listOfFiles) {
+                FileInputStream fis = new FileInputStream(traceToZip);
+                k += 1;
+                ZipEntry entry = new ZipEntry("save" + k + ".dat");
+                zout.putNextEntry(entry);
+                byte[] buffer = new byte[fis.available()];
+                fis.read(buffer);
+                zout.write(buffer);
+                zout.closeEntry();
+                fis.close();
             }
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
@@ -85,7 +78,7 @@ public class Main {
 
     }
 
-    public static String getStringDate () {
+    public static String getStringDate() {
         SimpleDateFormat myDF = new SimpleDateFormat("yyyy.MM.dd hh:mm:ss");
         return myDF.format(new Date());
     }
