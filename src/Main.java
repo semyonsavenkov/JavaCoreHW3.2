@@ -9,7 +9,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        String directoryPath = "D:\\Games/savegames/";
+        String directoryPath = "/Users/semyonsavenkov/IdeaProjects/JavaCoreHW3_Files/Games/savegames/";
 
         //creating gameProgress and saving it to a file
         GameProgress gameProgress =
@@ -76,11 +76,6 @@ public class Main {
             System.out.println(ex.getMessage());
         }
 
-    }
-
-    public static String getStringDate() {
-        SimpleDateFormat myDF = new SimpleDateFormat("yyyy.MM.dd hh:mm:ss");
-        return myDF.format(new Date());
     }
 
 }
